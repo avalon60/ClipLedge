@@ -2,9 +2,13 @@
 # Author: Clive Bostock
 # Date: 10-Sep-2026
 # Purpose: Build a native development .deb without installing system files.
-# Usage: sh scripts/package-deb.sh
+# Usage: sh scripts/package-deb.sh; CARGO_NET_OFFLINE=true sh scripts/package-deb.sh
 set -eu
 cd "$(dirname "$0")/.."
+# Fetch missing locked dependencies before the offline build and packaging steps.
+# CARGO_NET_OFFLINE=true remains available for deliberately disconnected builds.
+cargo fetch --locked
+export CARGO_NET_OFFLINE=true
 cargo build --release --locked --offline
 package_stage=$(mktemp -d)
 trap 'rm -rf "$package_stage"' EXIT

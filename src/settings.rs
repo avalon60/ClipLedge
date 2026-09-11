@@ -7,6 +7,19 @@ use std::{
     path::PathBuf,
 };
 
+/// Default Cinnamon accelerator for opening the shelf.
+pub const DEFAULT_SHORTCUT: &str = "<Control><Alt>v";
+
+/// Resolve an empty shortcut entry to the default and trim surrounding spaces.
+pub fn shortcut_binding(input: &str) -> &str {
+    let binding = input.trim();
+    if binding.is_empty() {
+        DEFAULT_SHORTCUT
+    } else {
+        binding
+    }
+}
+
 /// Persistent non-sensitive settings.
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(default)]
@@ -48,9 +61,35 @@ impl Default for Settings {
             status_icon: true,
             start_at_login: false,
             theme: "System".into(),
-            shortcut: "<Super>v".into(),
+            shortcut: DEFAULT_SHORTCUT.into(),
             onboarded: false,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty_shortcut_replaces_previous_binding_and_survives_serialization() {
+        for input in ["", "   "] {
+            let mut settings = Settings {
+                shortcut: "<Super>v".into(),
+                ..Settings::default()
+            };
+            settings.shortcut = shortcut_binding(input).into();
+            assert!(settings.valid());
+            let saved = serde_json::to_vec(&settings).unwrap();
+            let reopened: Settings = serde_json::from_slice(&saved).unwrap();
+            assert_eq!(reopened.shortcut, DEFAULT_SHORTCUT);
+        }
+    }
+
+    #[test]
+    fn explicit_shortcut_is_preserved() {
+        assert_eq!(shortcut_binding(" <Control>F9 "), "<Control>F9");
+        assert_eq!(Settings::default().shortcut, DEFAULT_SHORTCUT);
     }
 }
 /// Resolve a standard XDG directory with an absolute-path-only override.

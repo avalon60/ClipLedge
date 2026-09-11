@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install native dependencies
-        run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libsqlcipher-dev libssl-dev pkg-config xvfb xclip dbus-x11 gnome-keyring
+        run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libsqlcipher-dev libssl-dev pkg-config xvfb xclip dbus-x11 gnome-keyring dpkg-dev
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: '1.75.0'
@@ -17,6 +17,8 @@ jobs:
       - run: cargo test --locked
       - run: cargo build --locked
       - run: cargo build --release --locked
+      - name: Build Debian package with a fresh dependency cache
+        run: CARGO_HOME="$(mktemp -d)" sh scripts/package-deb.sh
       - name: X11 protocol tests
         run: xvfb-run -a cargo test --locked --test x11_backend -- --ignored --test-threads=1
       - name: Private Secret Service and GTK tests

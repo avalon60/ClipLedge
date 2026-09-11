@@ -4,7 +4,7 @@ use crate::{
     content::Representation,
     desktop,
     engine::{Engine, Request, Response},
-    settings::Settings,
+    settings::{shortcut_binding, Settings, DEFAULT_SHORTCUT},
     storage::Item,
 };
 use gtk::{gdk, gio, glib, prelude::*};
@@ -942,56 +942,20 @@ impl Shelf {
         root.append(&label("Storage target (MiB)"));
         root.append(&size);
         let accelerator = gtk::Entry::builder()
-            .text(&current.shortcut)
-            .placeholder_text("Click here, then press a shortcut")
-            .editable(false)
+            .text(shortcut_binding(&current.shortcut))
+            .placeholder_text("Empty uses Ctrl+Alt+V")
             .build();
-        accelerator.set_tooltip_text(Some("Click, then press the complete key combination"));
-        let capture = gtk::EventControllerKey::new();
-        capture.connect_key_pressed({
-            let accelerator = accelerator.clone();
-            move |_, key, _, state| {
-                use gdk::{Key, ModifierType};
-                if [
-                    Key::Alt_L,
-                    Key::Alt_R,
-                    Key::Control_L,
-                    Key::Control_R,
-                    Key::Shift_L,
-                    Key::Shift_R,
-                    Key::Super_L,
-                    Key::Super_R,
-                    Key::Meta_L,
-                    Key::Meta_R,
-                    Key::Hyper_L,
-                    Key::Hyper_R,
-                ]
-                .contains(&key)
-                {
-                    return glib::Propagation::Stop;
-                }
-                let modifiers = state
-                    & (ModifierType::SHIFT_MASK
-                        | ModifierType::CONTROL_MASK
-                        | ModifierType::ALT_MASK
-                        | ModifierType::SUPER_MASK
-                        | ModifierType::META_MASK
-                        | ModifierType::HYPER_MASK);
-                if modifiers.intersects(
-                    ModifierType::CONTROL_MASK
-                        | ModifierType::ALT_MASK
-                        | ModifierType::SUPER_MASK
-                        | ModifierType::META_MASK,
-                ) {
-                    accelerator.set_text(&gtk::accelerator_name(key, modifiers));
-                }
-                glib::Propagation::Stop
-            }
-        });
-        accelerator.add_controller(capture);
+        accelerator.set_tooltip_text(Some("Type <Control><Alt>v for Ctrl+Alt+V"));
         root.append(&label("Shortcut binding"));
         root.append(&accelerator);
-        let shortcut_status = label("Click the field, then press the complete shortcut.");
+        let use_default = gtk::Button::with_label("Use default (Ctrl+Alt+V)");
+        use_default.connect_clicked({
+            let accelerator = accelerator.clone();
+            move |_| accelerator.set_text(DEFAULT_SHORTCUT)
+        });
+        root.append(&use_default);
+        let shortcut_status =
+            label("Type a binding such as <Control><Alt>v. Empty uses Ctrl+Alt+V.");
         shortcut_status.add_css_class("dim-label");
         root.append(&shortcut_status);
         let install = gtk::Button::with_label("Register shortcut (check for conflicts)");
@@ -1000,6 +964,7 @@ impl Shelf {
         let accelerator_for_install = accelerator.clone();
         install.connect_clicked(move |_| {
             if let Some(s) = weak.upgrade() {
+                accelerator_for_install.set_text(shortcut_binding(&accelerator_for_install.text()));
                 match desktop::install_shortcut(&accelerator_for_install.text()) {
                     Ok(()) => {
                         let mut cfg = s.settings.borrow().clone();
@@ -1014,9 +979,7 @@ impl Shelf {
                     }
                     Err(e) => shortcut_status_for_install.set_text(match e {
                         "shortcut-conflict" => "That shortcut is already in use.",
-                        "shortcut-invalid" => {
-                            "Press Control, Alt, Super, or Meta with another key."
-                        }
+                        "shortcut-invalid" => "Enter a valid binding, for example <Control><Alt>v.",
                         "cinnamon-settings-unavailable" => {
                             "Cinnamon shortcut settings are unavailable."
                         }
@@ -1041,7 +1004,7 @@ impl Shelf {
             }
         });
         root.append(&shortcut);
-        let cmd=label("Custom shortcut command: clipledge --toggle\nSuggested binding: Super+V (choose another if already assigned)");
+        let cmd=label("Custom shortcut command: clipledge --toggle\nSuggested binding: Ctrl+Alt+V (choose another if already assigned)");
         cmd.set_selectable(true);
         root.append(&cmd);
         let save = gtk::Button::with_label("Save settings");
@@ -1067,7 +1030,8 @@ impl Shelf {
                     .filter(|v| !v.is_empty())
                     .collect();
                 cfg.theme = ["System", "Light", "Dark"][theme.selected().min(2) as usize].into();
-                cfg.shortcut = accelerator.text().into();
+                cfg.shortcut = shortcut_binding(&accelerator.text()).into();
+                accelerator.set_text(&cfg.shortcut);
                 cfg.max_items = count.value() as usize;
                 cfg.max_days = days.value() as u64;
                 cfg.max_bytes = size.value() as u64 * 1024 * 1024;

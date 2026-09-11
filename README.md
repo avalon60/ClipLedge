@@ -48,8 +48,9 @@ The development checksum is not cryptographically signed.
 3. Review the capture categories, application exclusions, retention values,
    appearance, status-icon option, and **Start at login** option.
 4. Select **Save settings**.
-5. Click **Shortcut binding**, press the complete shortcut you want, and select
-   **Register shortcut (check for conflicts)**. Existing bindings are never
+5. In **Shortcut binding**, enter `<Control><Alt>v` for the default **Ctrl+Alt+V**,
+   or type another binding, then select **Register shortcut (check for conflicts)**.
+   Existing bindings are never
    replaced. If it conflicts, choose another binding or select **Configure
    Cinnamon shortcut…** and create one for this command:
 
@@ -229,8 +230,7 @@ Install the build dependencies on Linux Mint 22.x or Ubuntu 24.04:
 
 ```sh
 sudo apt install cargo rustc libgtk-4-dev libsqlcipher-dev libssl-dev pkg-config
-cargo fetch --locked
-cargo build --release --locked --offline
+cargo build --release --locked
 ./target/release/clipledge --show
 ```
 
@@ -240,6 +240,13 @@ host architecture:
 ```sh
 sh scripts/package-deb.sh
 ```
+
+The packaging script downloads any missing dependencies from the committed
+lockfile before building. An empty Cargo cache is supported with network access.
+For a deliberately offline build after dependencies have been downloaded, use
+`CARGO_NET_OFFLINE=true sh scripts/package-deb.sh`. If dependency fetching or
+building fails, no new package is produced; any existing file in `dist` is still
+the previous build.
 
 ARM64 remains experimental until it is built and exercised on an ARM64 Mint or
 Ubuntu system.
