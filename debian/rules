@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+# Author: Clive Bostock
+# Date: 10-Sep-2026
+# Purpose: Build Debian packages from the locked Rust source.
+# Usage: dpkg-buildpackage -us -uc -b
+%:
+	dh $@
+override_dh_auto_build:
+	cargo build --release --locked --offline
+override_dh_auto_test:
+	cargo test --locked --offline
+override_dh_auto_install:
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/clipledge

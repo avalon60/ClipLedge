@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.clipledge.ClipLedge</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>ClipLedge</name>
+  <developer id="org.clipledge"><name>Clive Bostock</name></developer>
+  <summary>Private encrypted clipboard history for Cinnamon</summary>
+  <description><p>Browse a horizontal shelf of clipboard previews, search local history, pin useful items, and restore supported formats without simulated keyboard input.</p><p>History is encrypted with SQLCipher. Full capture requires X11; Wayland supports browsing and focused restoration.</p></description>
+  <launchable type="desktop-id">org.clipledge.ClipLedge.desktop</launchable>
+  <provides><binary>clipledge</binary></provides>
+  <content_rating type="oars-1.1"/>
+  <releases><release version="0.1.0" date="2026-09-10" type="development"/></releases>
+</component>

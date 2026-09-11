@@ -1,0 +1,18 @@
+Source: clipledge
+Section: utils
+Priority: optional
+Maintainer: Clive Bostock <clive@localhost>
+Build-Depends: debhelper-compat (= 13), cargo, rustc (>= 1.75), pkg-config, libgtk-4-dev (>= 4.12), libsqlcipher-dev, libssl-dev
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+
+Package: clipledge
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libsqlcipher1 (>= 4.5.6)
+Recommends: gnome-keyring
+Conflicts: mint-shelf (<= 0.1.0)
+Replaces: mint-shelf (<= 0.1.0)
+Description: native encrypted clipboard history for Cinnamon
+ A GTK 4 shelf for searching, pinning, and restoring local clipboard history.
+ SQLCipher encrypts history using a key held in the desktop Secret Service.
+ X11 supports capture; native Wayland supports browsing and restoration only.

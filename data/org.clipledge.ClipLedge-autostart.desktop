@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=ClipLedge
+Exec=clipledge --background
+Icon=org.clipledge.ClipLedge
+Terminal=false
+X-GNOME-Autostart-enabled=true

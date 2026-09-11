@@ -1,0 +1,29 @@
+[package]
+name = "clipledge"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+authors = ["Clive Bostock"]
+license = "GPL-3.0-or-later"
+description = "Private native clipboard history for Cinnamon"
+
+[dependencies]
+gtk = { package = "gtk4", version = "=0.8.2", features = ["v4_12"] }
+x11rb = { version = "=0.13.1", features = ["xfixes", "randr"] }
+rusqlite = { version = "=0.31.0", features = ["sqlcipher", "backup"] }
+serde = { version = "=1.0.203", features = ["derive"] }
+serde_json = "=1.0.117"
+sha2 = "=0.10.8"
+getrandom = "=0.2.15"
+zeroize = "=1.8.1"
+url = "=2.5.0"
+unicode-normalization = "=0.1.23"
+image = { version = "=0.24.9", default-features = false, features = ["png", "jpeg", "webp"] }
+libc = "=0.2.155"
+
+[dev-dependencies]
+tempfile = "=3.10.1"
+
+[profile.release]
+lto = "thin"
+strip = true

@@ -1,0 +1,38 @@
+.TH CLIPLEDGE 1 "10 September 2026" "0.1.0"
+.SH NAME
+clipledge \- native encrypted clipboard history for Cinnamon
+.SH SYNOPSIS
+.B clipledge
+[\-\-show|\-\-toggle|\-\-hide|\-\-pause|\-\-resume|\-\-settings|\-\-status|\-\-quit|\-\-background]
+.SH DESCRIPTION
+Stores eligible X11 clipboard content in an encrypted SQLCipher database.
+The key is held in the desktop Secret Service. Enter restores content without
+injecting keystrokes. Native Wayland capture is unavailable.
+.SH OPTIONS
+.TP
+.B \-\-toggle
+Show or hide the shelf. Suitable for a Cinnamon custom keyboard shortcut.
+.TP
+.B \-\-background
+Remain running without displaying the shelf or prompting for a key.
+.TP
+.B \-\-status
+Print non-sensitive status without opening history when not running.
+.TP
+.B \-\-pause, \-\-resume
+Change the user capture gate; locked or unsupported states still prevent capture.
+.TP
+.B \-\-settings
+Open preferences and explicit Unlock / Retry.
+.TP
+.B \-\-quit
+Exit. Clipboard survival requires another clipboard owner.
+.SH FILES
+.I $XDG_DATA_HOME/clipledge/history.db
+.br
+.I $XDG_CONFIG_HOME/clipledge/settings.json
+.SH PRIVACY
+Exclusion and structured-secret detection are best effort. History deletion does
+not clear the live clipboard or erase external backups and filesystem snapshots.
+.SH AUTHOR
+Clive Bostock

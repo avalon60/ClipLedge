@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=ClipLedge
+GenericName=Clipboard Manager
+Comment=Private encrypted clipboard history for Cinnamon
+Exec=clipledge --show
+Icon=org.clipledge.ClipLedge
+Terminal=false
+Categories=Utility;GTK;
+Keywords=clipboard;history;copy;paste;
+StartupNotify=true
