@@ -267,7 +267,7 @@ pub fn install_shortcut(binding: &str) -> Result<(), &'static str> {
         let path = format!("/org/cinnamon/desktop/keybindings/custom-keybindings/{name}/");
         let other =
             gio::Settings::new_full(&custom_schema, gio::SettingsBackend::NONE, Some(&path));
-        if name.as_str() == "clipledge" && other.string("command") == "clipledge --toggle" {
+        if name.as_str() == "custom-clipledge" && other.string("command") == "clipledge --toggle" {
             continue;
         }
         if other
@@ -304,7 +304,7 @@ pub fn install_shortcut(binding: &str) -> Result<(), &'static str> {
     let custom = gio::Settings::new_full(
         &custom_schema,
         gio::SettingsBackend::NONE,
-        Some("/org/cinnamon/desktop/keybindings/custom-keybindings/clipledge/"),
+        Some("/org/cinnamon/desktop/keybindings/custom-keybindings/custom-clipledge/"),
     );
     if !custom.string("command").is_empty() && custom.string("command") != "clipledge --toggle" {
         return Err("shortcut-conflict");
@@ -320,12 +320,19 @@ pub fn install_shortcut(binding: &str) -> Result<(), &'static str> {
         .set_strv("binding", [binding])
         .map_err(|_| "shortcut-write")?;
     custom.apply();
-    if !names.iter().any(|s| s.as_str() == "clipledge") {
-        let mut updated = names.iter().map(|s| s.to_string()).collect::<Vec<_>>();
-        updated.push("clipledge".into());
-        base.set_strv("custom-list", updated)
-            .map_err(|_| "shortcut-write")?;
+    let mut updated = names.iter().map(|s| s.to_string()).collect::<Vec<_>>();
+    if !names.iter().any(|s| s.as_str() == "custom-clipledge") {
+        updated.push("custom-clipledge".into());
+    } else {
+        // Match Cinnamon Settings: toggle its ignored marker to reload changed bindings.
+        if updated.iter().any(|s| s == "__dummy__") {
+            updated.retain(|s| s != "__dummy__");
+        } else {
+            updated.push("__dummy__".into());
+        }
     }
+    base.set_strv("custom-list", updated)
+        .map_err(|_| "shortcut-write")?;
     gio::Settings::sync();
     if custom.string("name") != "ClipLedge"
         || custom.string("command") != "clipledge --toggle"
@@ -333,7 +340,7 @@ pub fn install_shortcut(binding: &str) -> Result<(), &'static str> {
         || !base
             .strv("custom-list")
             .iter()
-            .any(|s| s.as_str() == "clipledge")
+            .any(|s| s.as_str() == "custom-clipledge")
     {
         return Err("shortcut-write");
     }

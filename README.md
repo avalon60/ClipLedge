@@ -42,13 +42,16 @@ The development checksum is not cryptographically signed.
    ```
 
 2. The Settings window opens on first use. Select **Unlock / Retry**. This creates
-   a random encryption key in your desktop keyring and then creates the encrypted
-   history database. If your keyring is locked, the desktop may ask you to unlock
-   it.
-3. Review the capture categories, application exclusions, retention values,
+   a random encryption key in **GNOME Keyring**, Linux Mint's desktop password
+   vault, and then creates the encrypted history database. If prompted, enter
+   your normal desktop-login password to unlock the keyring.
+3. After this first setup, ClipLedge opens its history automatically whenever the
+   desktop keyring is unlocked. Use **Unlock / Retry** again only if the keyring
+   is locked or unavailable.
+4. Review the capture categories, application exclusions, retention values,
    appearance, status-icon option, and **Start at login** option.
-4. Select **Save settings**.
-5. In **Shortcut binding**, enter `<Control><Alt>v` for the default **Ctrl+Alt+V**,
+5. Select **Save settings**.
+6. In **Shortcut binding**, enter `<Control><Alt>v` for the default **Ctrl+Alt+V**,
    or type another binding, then select **Register shortcut (check for conflicts)**.
    Existing bindings are never
    replaced. If it conflicts, choose another binding or select **Configure
@@ -184,9 +187,9 @@ More detail is available in [Privacy](docs/privacy.md) and
 ## Troubleshooting
 
 If the shelf says **History locked**, open Settings and select **Unlock / Retry**.
-Make sure the desktop keyring is running and has a usable default collection. An
-existing database is preserved if its key is missing or unavailable; `ClipLedge`
-will not silently replace it.
+GNOME Keyring, Mint's desktop password vault, must be running and unlocked with a
+usable default collection. An existing database is preserved if its key is missing
+or unavailable; `ClipLedge` will not silently replace it.
 
 If copied items do not appear, check:
 
