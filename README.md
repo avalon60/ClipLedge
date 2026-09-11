@@ -1,5 +1,9 @@
 # ClipLedge
 
+<p align="center">
+  <img src="docs/images/clipledge-logo.png" alt="ClipLedge logo" width="420">
+</p>
+
 `ClipLedge` is a native Rust/GTK 4 clipboard history application for Linux Mint
 Cinnamon. It keeps supported clipboard items in a local encrypted database and
 shows them as a compact, searchable shelf.
@@ -276,6 +280,12 @@ generated from the locked dependency graph.
 
 ## Acknowledgement
 
-The horizontal, card-based shelf interaction was inspired by a macOS application
-concept called Shelf demonstrated by Nathan B. Jones. ClipLedge is an independent
+ClipLedge was prompted in part by a demonstration from Nathan B. Jones in which
+he asked two AI systems to design a clipboard-history application for macOS.
+The resulting applications differed substantially in appearance, interaction
+and functionality.
+
+One of those implementations, produced with Astra and refined through further
+prompting, helped prompt the idea for ClipLedge. ClipLedge is an independent
 Linux implementation and is not affiliated with or endorsed by Nathan B. Jones.
+
